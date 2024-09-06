@@ -22,6 +22,7 @@ import java.sql.ResultSet;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -117,11 +118,17 @@ public List<FieldStudentsLogsModel> GetStudentsLogs(String search, String course
     String searchStudentInfo = "%" + search + "%";
     
     // SQL query with conditional logic for Course filtering
-    String sql = "SELECT * FROM student_logs_information WHERE DateDeleted IS NULL " +
-                 "AND (Student_ID LIKE ? OR StudentFullName LIKE ?) " +
-                 "AND Event_Title = ? " +
-                 "AND (? = 'ALL COURSE' OR Course = ?) " +
-                 "ORDER BY StudentFullName ASC";
+    String sql = "SELECT *,\n" +
+"       FORMAT(Morning_Time_in, 'hh:mm tt') AS Formatted_Morning_Time_in,\n" +
+"       FORMAT(Morning_Time_out, 'hh:mm tt') AS Formatted_Morning_Time_out,\n" +
+"       FORMAT(Afternoon_Time_in, 'hh:mm tt') AS Formatted_Afternoon_Time_in,\n" +
+"       FORMAT(Afternoon_Time_out, 'hh:mm tt') AS Formatted_Afternoon_Time_out\n" +
+"FROM trackify_db.student_logs_information\n" +
+"WHERE DateDeleted IS NULL \n" +
+"  AND (Student_ID LIKE ? OR StudentFullName LIKE ?)\n" +
+"  AND Event_Title = ? \n" +
+"  AND (? = 'ALL COURSE' OR Course = ?)  \n" +
+"ORDER BY StudentFullName ASC;";
 
     try (PreparedStatement ps = prepareStatement(sql)) {
         // Set parameters
@@ -153,25 +160,31 @@ public List<FieldStudentsLogsModel> GetStudentsLogs(String search, String course
                 afternoonInputStream = getClass().getResourceAsStream("/Trackify/Icons/DefaultSignature.png");
             }
                 // Convert java.sql.Time to java.time.LocalTime
-                LocalTime morningTimeIn = rs.getTime("Morning_Time_in") != null ? rs.getTime("Morning_Time_in").toLocalTime() : null;
-                LocalTime morningTimeOut = rs.getTime("Morning_Time_out") != null ? rs.getTime("Morning_Time_out").toLocalTime() : null;
-                LocalTime afternoonTimeIn = rs.getTime("Afternoon_Time_in") != null ? rs.getTime("Afternoon_Time_in").toLocalTime() : null;
-                LocalTime afternoonTimeOut = rs.getTime("Afternoon_Time_out") != null ? rs.getTime("Afternoon_Time_out").toLocalTime() : null;
+               LocalTime morningTimeIn = rs.getTime("Morning_Time_in") != null ? rs.getTime("Morning_Time_in").toLocalTime() : null;
+LocalTime morningTimeOut = rs.getTime("Morning_Time_out") != null ? rs.getTime("Morning_Time_out").toLocalTime() : null;
+LocalTime afternoonTimeIn = rs.getTime("Afternoon_Time_in") != null ? rs.getTime("Afternoon_Time_in").toLocalTime() : null;
+LocalTime afternoonTimeOut = rs.getTime("Afternoon_Time_out") != null ? rs.getTime("Afternoon_Time_out").toLocalTime() : null;
 
-                // Create StudentLogsModel and add it to the list
-                FieldStudentsLogsModel data = new FieldStudentsLogsModel(
-                  
-                    rs.getInt("Student_ID"),
-                    rs.getString("StudentFullName"),
-                    rs.getString("Course"),
-                    rs.getString("YearLevel"),
-                    morningTimeIn,
-                    morningTimeOut,
-                   morningInputStream,
-                    afternoonTimeIn,
-                    afternoonTimeOut,
-                   afternoonInputStream
-                );
+// Format LocalTime to HH:mm a
+DateTimeFormatter formatter = DateTimeFormatter.ofPattern("hh:mm a");
+String formattedMorningTimeIn = morningTimeIn != null ? morningTimeIn.format(formatter) : null;
+String formattedMorningTimeOut = morningTimeOut != null ? morningTimeOut.format(formatter) : null;
+String formattedAfternoonTimeIn = afternoonTimeIn != null ? afternoonTimeIn.format(formatter) : null;
+String formattedAfternoonTimeOut = afternoonTimeOut != null ? afternoonTimeOut.format(formatter) : null;
+
+// Create StudentLogsModel and add it to the list
+FieldStudentsLogsModel data = new FieldStudentsLogsModel(
+    rs.getInt("Student_ID"),
+    rs.getString("StudentFullName"),
+    rs.getString("Course"),
+    rs.getString("YearLevel"),
+    formattedMorningTimeIn,
+    formattedMorningTimeOut,
+    morningInputStream,
+    formattedAfternoonTimeIn,
+    formattedAfternoonTimeOut,
+    afternoonInputStream
+);
 
                 list.add(data);
             }
@@ -187,11 +200,17 @@ public List<StudentLogsModel> SearchStudentsLogs(String search, String course, S
     String searchStudentInfo = "%" + search + "%";
     
     // SQL query with conditional logic for Course filtering
-    String sql = "SELECT * FROM student_logs_information WHERE DateDeleted IS NULL " +
-                 "AND (Student_ID LIKE ? OR StudentFullName LIKE ?) " +
-                 "AND Event_Title = ? " +
-                 "AND (? = 'ALL COURSE' OR Course = ?) " +
-                 "ORDER BY StudentFullName ASC";
+    String sql = "SELECT *,\n" +
+"       DATE_FORMAT(Morning_Time_in, '%r') AS Formatted_Morning_Time_in,\n" +
+"       DATE_FORMAT(Morning_Time_out, '%r') AS Formatted_Morning_Time_out,\n" +
+"       DATE_FORMAT(Afternoon_Time_in, '%r') AS Formatted_Afternoon_Time_in,\n" +
+"       DATE_FORMAT(Afternoon_Time_out, '%r') AS Formatted_Afternoon_Time_out\n" +
+"FROM trackify_db.student_logs_information\n" +
+"WHERE DateDeleted IS NULL \n" +
+"  AND (Student_ID LIKE ? OR StudentFullName LIKE ?)\n" +
+"  AND Event_Title = ? \n" +
+"  AND (? = 'ALL COURSE' OR Course = ?)  \n" +
+"ORDER BY StudentFullName ASC";
 
     try (PreparedStatement ps = prepareStatement(sql)) {
         // Set parameters
@@ -332,7 +351,7 @@ public boolean CheckNoTimeInLogRecords(StudentLogsModel data) {
             if (rowsAffected > 0) {
                 Toast.show(com, Toast.Type.SUCCESS, "Successfully Timed Out");
             } else {
-                Toast.show(com, Toast.Type.INFO, "You don't have a morning time-in or you've already timed out!");
+                Toast.show(com, Toast.Type.INFO, "No morning time-in recorded, or you have already timed out.!");
             }
         } else {
             Toast.show(com, Toast.Type.INFO, "Already Timed Out or No Time-In Record Found!");

@@ -57,7 +57,7 @@ public class MainFrame extends javax.swing.JFrame {
         initComponents();
         studentController = new StudentController();
         eventsController = new EventsController();
-setShape(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 40, 40));
+setShape(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 35, 35));
            List<EventsModel> list = eventsController.PopulateToMainFrame();
     
     // Create a list to hold the titles
@@ -156,13 +156,14 @@ public void setSize(int width, int height) {
         try {
             Main main = new Main();
              main.setVisible(true);
+           this.setVisible(false);
         } catch (ParseException ex) {
             Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
             Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
     
-                this.dispose();
+               
                     }
                 }), option);
       
@@ -171,7 +172,7 @@ public void setSize(int width, int height) {
         studentID.setText("#000000");
         studentName.setText("e.g Juan Dela Cruz");
         studentCourse.setText("BS-CPE");
-        studentYearLevel.setText("studentYearLevel");
+        studentYearLevel.setText("1st Year");
         return true;
     }
   
@@ -202,7 +203,6 @@ public void setSize(int width, int height) {
         jButton5 = new javax.swing.JButton();
         jLabel10 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
-        jButton6 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setUndecorated(true);
@@ -332,13 +332,6 @@ public void setSize(int width, int height) {
         jLabel5.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         jLabel5.setText("Events");
 
-        jButton6.setText("jButton6");
-        jButton6.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton6ActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout mainPanelLayout = new javax.swing.GroupLayout(mainPanel);
         mainPanel.setLayout(mainPanelLayout);
         mainPanelLayout.setHorizontalGroup(
@@ -375,10 +368,8 @@ public void setSize(int width, int height) {
                             .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addGroup(mainPanelLayout.createSequentialGroup()
                                 .addComponent(eventcb, javax.swing.GroupLayout.PREFERRED_SIZE, 296, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 0, Short.MAX_VALUE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButton6)))
-                .addContainerGap(11, Short.MAX_VALUE))
+                                .addGap(0, 0, Short.MAX_VALUE)))))
+                .addContainerGap(74, Short.MAX_VALUE))
         );
         mainPanelLayout.setVerticalGroup(
             mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -406,9 +397,7 @@ public void setSize(int width, int height) {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(studentName, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(studentCourse, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jButton6))
+                        .addComponent(studentCourse, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(studentYearLevel, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -510,8 +499,9 @@ if (input.isEmpty()) {
     }//GEN-LAST:event_searchFieldActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
-        if (e_Signature.isDrawingEmpty()||studentID.getText().equals("#000000")||studentName.getText().equals("e.g Juan Dela Cruz")) {
-            System.out.println("signature is empty");
+        if (e_Signature.isDrawingEmpty()||studentID.getText().equals("#000000")||studentName.getText().equals("e.g Juan Dela Cruz")||eventcb.getSelectedItem().equals("")) {
+            
+             Toast.show(this, Toast.Type.WARNING, "DATA NOT FOUND!");
         }else{
               LocalTime currentTime = LocalTime.now();
             DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm");
@@ -529,20 +519,6 @@ if (input.isEmpty()) {
             
         }
     }//GEN-LAST:event_jButton5ActionPerformed
-
-    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
-     Main main;
-        try {
-            main = new Main();
-             main.setVisible(true);
-        } catch (ParseException ex) {
-            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SQLException ex) {
-            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    
-     this.dispose();
-    }//GEN-LAST:event_jButton6ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
      if (e_Signature.isDrawingEmpty()||studentID.getText().equals("#000000")||studentName.getText().equals("e.g Juan Dela Cruz")) {
@@ -660,7 +636,6 @@ private boolean isPopupVisible = false;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
-    private javax.swing.JButton jButton6;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;

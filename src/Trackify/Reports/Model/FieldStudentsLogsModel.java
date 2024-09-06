@@ -14,20 +14,6 @@ import java.time.LocalTime;
 public class FieldStudentsLogsModel {
 
     /**
-     * @return the afternoontimein
-     */
-    public LocalTime getAfternoontimein() {
-        return afternoontimein;
-    }
-
-    /**
-     * @param afternoontimein the afternoontimein to set
-     */
-    public void setAfternoontimein(LocalTime afternoontimein) {
-        this.afternoontimein = afternoontimein;
-    }
-
-    /**
      * @return the studentid
      */
     public int getStudentid() {
@@ -86,28 +72,28 @@ public class FieldStudentsLogsModel {
     /**
      * @return the morningtimein
      */
-    public LocalTime getMorningtimein() {
+    public String getMorningtimein() {
         return morningtimein;
     }
 
     /**
      * @param morningtimein the morningtimein to set
      */
-    public void setMorningtimein(LocalTime morningtimein) {
+    public void setMorningtimein(String morningtimein) {
         this.morningtimein = morningtimein;
     }
 
     /**
      * @return the morningtimeout
      */
-    public LocalTime getMorningtimeout() {
+    public String getMorningtimeout() {
         return morningtimeout;
     }
 
     /**
      * @param morningtimeout the morningtimeout to set
      */
-    public void setMorningtimeout(LocalTime morningtimeout) {
+    public void setMorningtimeout(String morningtimeout) {
         this.morningtimeout = morningtimeout;
     }
 
@@ -126,21 +112,30 @@ public class FieldStudentsLogsModel {
     }
 
     /**
-     * @return the afternoontimeon
+     * @return the afternoontimein
      */
+    public String getAfternoontimein() {
+        return afternoontimein;
+    }
 
+    /**
+     * @param afternoontimein the afternoontimein to set
+     */
+    public void setAfternoontimein(String afternoontimein) {
+        this.afternoontimein = afternoontimein;
+    }
 
     /**
      * @return the afternoontimeout
      */
-    public LocalTime getAfternoontimeout() {
+    public String getAfternoontimeout() {
         return afternoontimeout;
     }
 
     /**
      * @param afternoontimeout the afternoontimeout to set
      */
-    public void setAfternoontimeout(LocalTime afternoontimeout) {
+    public void setAfternoontimeout(String afternoontimeout) {
         this.afternoontimeout = afternoontimeout;
     }
 
@@ -158,7 +153,7 @@ public class FieldStudentsLogsModel {
         this.afternoonsignature = afternoonsignature;
     }
 
-    public FieldStudentsLogsModel(int studentid, String studentfullname, String course, String yearlevel, LocalTime morningtimein, LocalTime morningtimeout, InputStream morningsignature, LocalTime afternoontimein, LocalTime afternoontimeout, InputStream afternoonsignature) {
+    public FieldStudentsLogsModel(int studentid, String studentfullname, String course, String yearlevel, String morningtimein, String morningtimeout, InputStream morningsignature, String afternoontimein, String afternoontimeout, InputStream afternoonsignature) {
         this.studentid = studentid;
         this.studentfullname = studentfullname;
         this.course = course;
@@ -172,6 +167,7 @@ public class FieldStudentsLogsModel {
     }
 
    
+   
 
   
 
@@ -183,10 +179,10 @@ public class FieldStudentsLogsModel {
     private String studentfullname;
     private String course;
     private String yearlevel;
-    private LocalTime  morningtimein;
-    private LocalTime  morningtimeout;
+    private String  morningtimein;
+    private String  morningtimeout;
     private InputStream morningsignature;
-    private LocalTime  afternoontimein;
-    private LocalTime  afternoontimeout;
+    private String  afternoontimein;
+    private String  afternoontimeout;
      private InputStream afternoonsignature;
 }

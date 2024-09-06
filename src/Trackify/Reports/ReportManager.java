@@ -19,6 +19,7 @@ import net.sf.jasperreports.view.JasperViewer;
 
 
 
+
 public class ReportManager {
 
       private static final Logger logger = Logger.getLogger(ReportManager.class);
@@ -64,4 +65,7 @@ public static ReportManager getInstance() throws IOException{
         JasperViewer.viewReport(print,false);
         
     }
+       public void printStudentsLogsToPDF(){
+           
+       }
 }

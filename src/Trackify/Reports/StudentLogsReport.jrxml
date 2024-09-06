@@ -20,7 +20,7 @@
 	<title>
 		<band height="79" splitType="Stretch">
 			<textField>
-				<reportElement x="193" y="51" width="161" height="28" uuid="2ca4f0b8-a405-4140-8e18-d62c20ad688c"/>
+				<reportElement stretchType="RelativeToBandHeight" x="80" y="51" width="409" height="28" uuid="2ca4f0b8-a405-4140-8e18-d62c20ad688c"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="16"/>
 				</textElement>
