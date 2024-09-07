@@ -7,11 +7,16 @@ package Trackify.Main;
 import Trackify.Component.Header;
 import Trackify.Component.Menu;
 import Trackify.Event.EventMenuSelected;
+import Trackify.Forms.AdminForms;
 import Trackify.Forms.EventsForms;
 import Trackify.Forms.StudentLogsDataForm;
 import Trackify.Forms.StudentInfoForm;
+import Trackify.FormsPopup.LoginForms;
+import Trackify.FormsPopup.StudentInfoFormPopup;
 import Trackify.Main.others.MainFrame;
 import Trackify.Model.ModelMenu;
+import Trackify.Models.UserDaoController.DaoController;
+import Trackify.Models.UserDaoController.ModelAdminData;
 import com.formdev.flatlaf.FlatIntelliJLaf;
 import com.formdev.flatlaf.FlatLightLaf;
 import java.awt.BorderLayout;
@@ -29,6 +34,11 @@ import net.miginfocom.swing.MigLayout;
 import org.jdesktop.animation.timing.Animator;
 import org.jdesktop.animation.timing.TimingTarget;
 import org.jdesktop.animation.timing.TimingTargetAdapter;
+import raven.modal.ModalDialog;
+import raven.modal.Toast;
+import raven.modal.component.SimpleModalBorder;
+import raven.modal.option.Location;
+import raven.modal.option.Option;
 
 
 public class Main extends javax.swing.JFrame {
@@ -42,6 +52,8 @@ public class Main extends javax.swing.JFrame {
     public Main() throws ParseException, SQLException {
         initComponents();
         setBackground(Color.WHITE);
+        ImageIcon shoolLogo = new ImageIcon(getClass().getResource("/Trackify/Icons/TrackifyLogoNBG.png"));
+        this.setIconImage(shoolLogo.getImage());
         init();
     }
 
@@ -87,12 +99,15 @@ public class Main extends javax.swing.JFrame {
                    }
                }else if (index==2) {
                    showForms(new StudentInfoForm());
+               }else if (index==3) {
+                   ChangeAdminPassword();
                }
            }
       });
        menu.addMenu(new ModelMenu("Event", new ImageIcon(getClass().getResource("/Trackify/Icons/event.png"))));
        menu.addMenu(new ModelMenu("Log Records", new ImageIcon(getClass().getResource("/Trackify/Icons/records.png"))));
        menu.addMenu(new ModelMenu("Student", new ImageIcon(getClass().getResource("/Trackify/Icons/student.png"))));
+       menu.addMenu(new ModelMenu("Student", new ImageIcon(getClass().getResource("/Trackify/Icons/Security.png"))));
        
        body.add(menu,"w 40!");
        body.add(main,"w 100%");
@@ -130,6 +145,43 @@ public class Main extends javax.swing.JFrame {
        main.add(com);
        main.repaint();
        main.revalidate();
+   }
+   private void ChangeAdminPassword(){
+       
+         DaoController daoController = new DaoController();
+         AdminForms adminForms = new AdminForms();
+       StudentInfoFormPopup studentInfoForm = new StudentInfoFormPopup();
+        Option option = ModalDialog.createOption();
+        option.setCloseOnPressedEscape(false);
+        option.setBackgroundClickType(Option.BackgroundClickType.CLOSE_MODAL);
+        option.getLayoutOption().setSize(330, 430)
+                .setLocation(Location.CENTER, Location.CENTER)
+                .setAnimateDistance(0.7f, 0);
+        
+          SimpleModalBorder.Option[] options = new SimpleModalBorder.Option[]{new SimpleModalBorder.Option("LOGIN", SimpleModalBorder.YES_OPTION)
+                  ,new SimpleModalBorder.Option("CANCEL", SimpleModalBorder.CANCEL_OPTION)};
+        ModalDialog.showModal(this, new SimpleModalBorder(
+               adminForms, "ADMIN USER", options,
+                (controller, action) -> {
+            if (action==SimpleModalBorder.YES_OPTION) {
+                if (adminForms.isEmptyFields()) {
+                    Toast.show(this, Toast.Type.WARNING, "Please fill out all fields."); 
+                    controller.consume();
+                }else if (adminForms.isMismatched()) {
+                     Toast.show(this, Toast.Type.WARNING, "New Password and Confirm Password do not match.."); 
+                     controller.consume();
+                }else{
+                    daoController.changePassword(adminForms.getData(),this);
+                    adminForms.setFieldstoEmpty();
+                    controller.consume();
+                }
+                
+                }
+               
+     
+               
+                    
+                }), option);
    }
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents

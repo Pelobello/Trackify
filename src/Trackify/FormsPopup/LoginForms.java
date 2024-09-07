@@ -4,6 +4,7 @@
  */
 package Trackify.FormsPopup;
 
+import Trackify.Models.UserDaoController.ModelAdminData;
 import com.formdev.flatlaf.FlatClientProperties;
 
 /**
@@ -12,16 +13,28 @@ import com.formdev.flatlaf.FlatClientProperties;
  */
 public class LoginForms extends javax.swing.JPanel {
 
-    /**
-     * Creates new form LoginForms
-     */
+    
+   
+
+    private ModelAdminData data;
     public LoginForms() {
         initComponents();
          userNameField.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Username");
           passwordField.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Password");
     }
 
-    
+     public ModelAdminData getData() {
+        return new ModelAdminData(passwordField.getPassword(), userNameField.getText(), userNameField.getText(), passwordField.getPassword());
+    }
+
+  
+    public boolean isEmptyFields(){
+        if (userNameField.getText().isEmpty()||passwordField.getPassword().equals("")) {
+            return true;
+        }else{
+             return false;
+        }
+    }
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {

@@ -13,8 +13,11 @@ import Trackify.Main.Main;
 import Trackify.Models.EventsModel;
 import Trackify.Models.StudentLogsModel;
 import Trackify.Models.StudentModel;
+import Trackify.Models.UserDaoController.DaoController;
+import Trackify.Models.UserDaoController.ModelAdminData;
 import Trackify.Models.other.EventImageModel;
 import com.formdev.flatlaf.FlatClientProperties;
+import com.formdev.flatlaf.FlatIntelliJLaf;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import java.awt.Color;
 import java.awt.Event;
@@ -46,10 +49,7 @@ import raven.modal.component.SimpleModalBorder;
 import raven.modal.option.Location;
 import raven.modal.option.Option;
 
-/**
- *
- * @author USER
- */
+
 public class MainFrame extends javax.swing.JFrame {
     private EventsController eventsController;
     private StudentController studentController;
@@ -57,25 +57,21 @@ public class MainFrame extends javax.swing.JFrame {
         initComponents();
         studentController = new StudentController();
         eventsController = new EventsController();
-setShape(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 35, 35));
-           List<EventsModel> list = eventsController.PopulateToMainFrame();
-    
+    setShape(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 35, 35));
+           List<EventsModel> list = eventsController.PopulateToMainFrame();  
     // Create a list to hold the titles
-    List<String> titles = new ArrayList<>();
+           List<String> titles = new ArrayList<>();
     
     // Extract titles from the list of EventsModel
     for (EventsModel eventsModel : list) {
         titles.add(eventsModel.getTitle());
-    }
-    
+    } 
     // Create a DefaultComboBoxModel with the list of titles
-    DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>(titles.toArray(new String[0]));
-    
+        DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>(titles.toArray(new String[0]));
     // Set the model to the JComboBox
-    eventcb.setModel(model);
-        
-
-  
+        eventcb.setModel(model);
+    ImageIcon shoolLogo = new ImageIcon(getClass().getResource("/Trackify/Icons/TrackifyLogoNBG.png"));
+        this.setIconImage(shoolLogo.getImage());
         init();
          setupKeyBindings();
     }
@@ -87,11 +83,9 @@ public void setSize(int width, int height) {
     private void init(){
           setBackground(Color.WHITE);
          
-         searchField.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Search Student");
+        searchField.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Search Student");
         searchField.putClientProperty(FlatClientProperties.TEXT_FIELD_TRAILING_ICON, new FlatSVGIcon("Trackify/Icons/search.svg"));
         mainPanel.putClientProperty(FlatClientProperties.STYLE,"arc: 35");
-      
-      
         jPanel1.putClientProperty(FlatClientProperties.STYLE,"arc: 40");
     }
     
@@ -138,6 +132,8 @@ public void setSize(int width, int height) {
       
     }
      private void Login() {
+         LoginForms loginForms = new LoginForms();
+         DaoController daoController = new DaoController();
        StudentInfoFormPopup studentInfoForm = new StudentInfoFormPopup();
         Option option = ModalDialog.createOption();
         option.setCloseOnPressedEscape(false);
@@ -149,20 +145,38 @@ public void setSize(int width, int height) {
           SimpleModalBorder.Option[] options = new SimpleModalBorder.Option[]{new SimpleModalBorder.Option("LOGIN", SimpleModalBorder.YES_OPTION)
                   ,new SimpleModalBorder.Option("CANCEL", SimpleModalBorder.CANCEL_OPTION)};
         ModalDialog.showModal(this, new SimpleModalBorder(
-                new LoginForms(), "ADMIN", options,
+                loginForms, "ADMIN", options,
                 (controller, action) -> {
                onPopupClosed();
-                    if (action==SimpleModalBorder.YES_OPTION) {              
-        try {
-            Main main = new Main();
-             main.setVisible(true);
-           this.setVisible(false);
-        } catch (ParseException ex) {
-            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SQLException ex) {
-            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
-        }
+               
+            if (action==SimpleModalBorder.YES_OPTION) {
+                ModelAdminData result =  daoController.loginAdmin(loginForms.getData());
+                if (loginForms.isEmptyFields()) {
+                     Toast.show(this, Toast.Type.WARNING, "Please fill out all fields."); 
+                      controller.consume();
+                }else{
+            if (result !=null) {
+                      try {
+            
+            
+                Main main = new Main();
+                 main.setVisible(true);
+                this.setVisible(false);
+            }   catch (ParseException ex) {
+                Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+            }   catch (SQLException ex) {
+                Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+            } 
+            }else{
+                   Toast.show(this, Toast.Type.WARNING, "Incorrect Username or Password."); 
+                   controller.consume();
+                } 
+                }
+               
+              
     
+                
+       
                
                     }
                 }), option);
@@ -174,6 +188,60 @@ public void setSize(int width, int height) {
         studentCourse.setText("BS-CPE");
         studentYearLevel.setText("1st Year");
         return true;
+    }
+    private void StudentsTimein() throws IOException{
+          if (e_Signature.isDrawingEmpty()||studentID.getText().equals("#000000")||studentName.getText().equals("e.g Juan Dela Cruz")||eventcb.getSelectedItem().equals("")) {
+            
+            Toast.show(this, Toast.Type.WARNING, "Student information not found or e-signature is empty");
+        }else{
+              LocalTime currentTime = LocalTime.now();
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm");
+            String formattedTime = currentTime.format(dtf);
+            LocalTime formattedLocalTime = LocalTime.parse(formattedTime, dtf);
+            
+              LocalTime morning = LocalTime.of(12, 00);
+
+            StudentLogsController logsController = new StudentLogsController();
+            int sID = Integer.parseInt(studentID.getText());
+            ImageIcon e_signature = e_Signature.getDrawingAsIcon(230, 230);
+            StudentLogsModel logsModel = new StudentLogsModel((String) eventcb.getSelectedItem(), sID, studentName.getText(), studentCourse.getText(), studentYearLevel.getText(), 
+                                                                formattedLocalTime,formattedLocalTime, e_signature, formattedLocalTime, formattedLocalTime,e_signature);
+              if (currentTime.isBefore(morning)) {
+                    logsController.MorningTimeIn(logsModel,this);
+                    setTextToDefault();
+              }else{
+                  logsController.AfternoonTimeIn(logsModel,this);
+                  setTextToDefault();
+              }
+   
+        }
+    }
+    private void StudentsTimeout(){
+          if (e_Signature.isDrawingEmpty()||studentID.getText().equals("#000000")||studentName.getText().equals("e.g Juan Dela Cruz")||eventcb.getSelectedItem().equals("")) {
+              Toast.show(this, Toast.Type.WARNING, "Student information not found or e-signature is empty");
+        }else{
+              LocalTime currentTime = LocalTime.now();
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm");
+            String formattedTime = currentTime.format(dtf);
+                        LocalTime formattedLocalTime = LocalTime.parse(formattedTime, dtf);
+             
+              LocalTime afternoon = LocalTime.of(12, 30);
+              
+            StudentLogsController logsController = new StudentLogsController();
+            int sID = Integer.parseInt(studentID.getText());
+            ImageIcon e_signature = e_Signature.getDrawingAsIcon(230, 230);
+            StudentLogsModel logsModel = new StudentLogsModel((String) eventcb.getSelectedItem(), sID, studentName.getText(), studentCourse.getText(), studentYearLevel.getText(), 
+                    formattedLocalTime,formattedLocalTime, e_signature, formattedLocalTime, formattedLocalTime,e_signature);
+              if (currentTime.isBefore(afternoon)) {
+                  logsController.MorningTimeOut(logsModel,this);
+                   setTextToDefault();
+              }else{
+                   logsController.AfternoonTimeOut(logsModel,this);
+                    setTextToDefault();
+              }
+           
+            
+        }
     }
   
 
@@ -499,45 +567,15 @@ if (input.isEmpty()) {
     }//GEN-LAST:event_searchFieldActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
-        if (e_Signature.isDrawingEmpty()||studentID.getText().equals("#000000")||studentName.getText().equals("e.g Juan Dela Cruz")||eventcb.getSelectedItem().equals("")) {
-            
-             Toast.show(this, Toast.Type.WARNING, "DATA NOT FOUND!");
-        }else{
-              LocalTime currentTime = LocalTime.now();
-            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm");
-            String formattedTime = currentTime.format(dtf);
-                        LocalTime formattedLocalTime = LocalTime.parse(formattedTime, dtf);
-
-            
-            StudentLogsController logsController = new StudentLogsController();
-            int sID = Integer.parseInt(studentID.getText());
-            ImageIcon e_signature = e_Signature.getDrawingAsIcon(230, 230);
-            StudentLogsModel logsModel = new StudentLogsModel((String) eventcb.getSelectedItem(), sID, studentName.getText(), studentCourse.getText(), studentYearLevel.getText(), 
-                    formattedLocalTime,formattedLocalTime, e_signature, formattedLocalTime, formattedLocalTime,e_signature);
-            
-            logsController.AfternoonTimeIn(logsModel,this);
-            
+        try {
+            StudentsTimein();
+        } catch (IOException ex) {
+            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-     if (e_Signature.isDrawingEmpty()||studentID.getText().equals("#000000")||studentName.getText().equals("e.g Juan Dela Cruz")) {
-            System.out.println("signature is empty");
-        }else{
-              LocalTime currentTime = LocalTime.now();
-            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm");
-            String formattedTime = currentTime.format(dtf);
-                        LocalTime formattedLocalTime = LocalTime.parse(formattedTime, dtf);
-   
-            StudentLogsController logsController = new StudentLogsController();
-            int sID = Integer.parseInt(studentID.getText());
-            ImageIcon e_signature = e_Signature.getDrawingAsIcon(230, 230);
-            StudentLogsModel logsModel = new StudentLogsModel((String) eventcb.getSelectedItem(), sID, studentName.getText(), studentCourse.getText(), studentYearLevel.getText(), 
-                    formattedLocalTime,formattedLocalTime, e_signature, formattedLocalTime, formattedLocalTime,e_signature);
-            
-            logsController.AfternoonTimeOut(logsModel,this);
-            
-        }
+        StudentsTimeout();
     }//GEN-LAST:event_jButton4ActionPerformed
 private boolean isPopupVisible = false;
   private void onPopupClosed() {
@@ -569,8 +607,7 @@ private boolean isPopupVisible = false;
                 RegisterStudentInfoForms();
                 
                 }
-                
-            
+  
                 
             }
             
@@ -597,30 +634,8 @@ private boolean isPopupVisible = false;
     }
 
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(MainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(MainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(MainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(MainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
+         FlatIntelliJLaf.registerCustomDefaultsSource("Trackify/Themes");
+        FlatIntelliJLaf.setup();
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new MainFrame().setVisible(true);
