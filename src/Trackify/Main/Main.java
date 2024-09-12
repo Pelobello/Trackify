@@ -107,7 +107,7 @@ public class Main extends javax.swing.JFrame {
        menu.addMenu(new ModelMenu("Event", new ImageIcon(getClass().getResource("/Trackify/Icons/event.png"))));
        menu.addMenu(new ModelMenu("Log Records", new ImageIcon(getClass().getResource("/Trackify/Icons/records.png"))));
        menu.addMenu(new ModelMenu("Student", new ImageIcon(getClass().getResource("/Trackify/Icons/student.png"))));
-       menu.addMenu(new ModelMenu("Student", new ImageIcon(getClass().getResource("/Trackify/Icons/Security.png"))));
+       menu.addMenu(new ModelMenu("Security", new ImageIcon(getClass().getResource("/Trackify/Icons/Security.png"))));
        
        body.add(menu,"w 40!");
        body.add(main,"w 100%");

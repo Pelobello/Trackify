@@ -8,15 +8,9 @@ import Trackify.Models.UserDaoController.ModelAdminData;
 import com.formdev.flatlaf.FlatClientProperties;
 import java.util.Arrays;
 
-/**
- *
- * @author USER
- */
+
 public class AdminForms extends javax.swing.JPanel {
 
-    
-  
-   
     public AdminForms() {
         initComponents();
         init();

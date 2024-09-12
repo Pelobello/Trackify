@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
+
 package Trackify.Main.others;
 
 import Trackify.Controller.EventsController;
@@ -173,11 +170,6 @@ public void setSize(int width, int height) {
                 } 
                 }
                
-              
-    
-                
-       
-               
                     }
                 }), option);
       
@@ -187,6 +179,8 @@ public void setSize(int width, int height) {
         studentName.setText("e.g Juan Dela Cruz");
         studentCourse.setText("BS-CPE");
         studentYearLevel.setText("1st Year");
+        searchField.setText("");
+        searchField.requestFocus();
         return true;
     }
     private void StudentsTimein() throws IOException{
@@ -243,7 +237,6 @@ public void setSize(int width, int height) {
             
         }
     }
-  
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents

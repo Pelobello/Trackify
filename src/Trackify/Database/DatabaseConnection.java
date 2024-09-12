@@ -13,10 +13,10 @@ public class DatabaseConnection {
      public Connection getCConnection() throws SQLException{
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            return DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/trackify_db", "root", "Gwapoko123");
+            return DriverManager.getConnection("jdbc:mysql://169.254.98.198:3306/trackify_db", "Trackify", "P@ssw0rd69");
         } catch (ClassNotFoundException | SQLException e) {
             java.util.logging.Logger.getLogger(DatabaseConnection.class.getName()).log(java.util.logging.Level.SEVERE, null, e);
-
+        
         return null;
     }
     }
@@ -30,3 +30,7 @@ public class DatabaseConnection {
         }
     }
 }
+//169.254.98.198
+//Trackify
+//P@ssw0rd69
+//
